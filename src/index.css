@@ -1,0 +1,255 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 引入highlight.js样式 */
+@import 'highlight.js/styles/github.css';
+@import 'highlight.js/styles/github-dark.css' (prefers-color-scheme: dark);
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* 移动端优化 */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* 允许文本选择的区域 */
+.selectable {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* 护眼模式样式 */
+.eye-care {
+  --bg-primary: #f7f5f3;
+  --bg-secondary: #f0ebe6;
+  --bg-tertiary: #e1d7cc;
+  --text-primary: #5d4e37;
+  --text-secondary: #8b7355;
+  --border-color: #d2c3b3;
+}
+
+.eye-care * {
+  border-color: var(--border-color) !important;
+}
+
+.eye-care header,
+.eye-care main,
+.eye-care aside,
+.eye-care .sidebar-content {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.eye-care .bg-gray-50,
+.eye-care .bg-gray-100 {
+  background-color: var(--bg-secondary) !important;
+}
+
+.eye-care .bg-white {
+  background-color: var(--bg-primary) !important;
+}
+
+.eye-care .text-gray-900,
+.eye-care .text-gray-800 {
+  color: var(--text-primary) !important;
+}
+
+.eye-care .text-gray-500,
+.eye-care .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+/* 护眼模式下的Markdown样式 */
+.eye-care .prose h1,
+.eye-care .prose h2,
+.eye-care .prose h3,
+.eye-care .prose h4,
+.eye-care .prose h5,
+.eye-care .prose h6 {
+  color: var(--text-primary) !important;
+}
+
+.eye-care .prose p,
+.eye-care .prose li {
+  color: var(--text-secondary) !important;
+}
+
+.eye-care .prose code {
+  background-color: var(--bg-tertiary) !important;
+  color: #8b4513 !important;
+}
+
+.eye-care .prose pre {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.eye-care .prose blockquote {
+  background-color: var(--bg-secondary) !important;
+  border-color: #d2b48c !important;
+  color: var(--text-secondary) !important;
+}
+
+.eye-care .prose table,
+.eye-care .prose th,
+.eye-care .prose td {
+  border-color: var(--border-color) !important;
+}
+
+.eye-care .prose th {
+  background-color: var(--bg-secondary) !important;
+}
+
+.eye-care .prose hr {
+  border-color: var(--border-color) !important;
+}
+
+.eye-care .prose a {
+  color: #8b4513 !important;
+}
+
+.eye-care .prose strong {
+  color: var(--text-primary) !important;
+}
+
+/* 代码高亮样式优化 */
+.hljs {
+  @apply rounded-lg p-4 overflow-x-auto;
+}
+
+/* Markdown内容样式优化 */
+.prose {
+  @apply text-gray-900 dark:text-gray-100;
+}
+
+.prose h1 {
+  @apply text-3xl font-bold mb-6 mt-8 text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2;
+}
+
+.prose h2 {
+  @apply text-2xl font-semibold mb-4 mt-6 text-gray-900 dark:text-white;
+}
+
+.prose h3 {
+  @apply text-xl font-semibold mb-3 mt-5 text-gray-900 dark:text-white;
+}
+
+.prose h4 {
+  @apply text-lg font-semibold mb-2 mt-4 text-gray-900 dark:text-white;
+}
+
+.prose h5 {
+  @apply text-base font-semibold mb-2 mt-3 text-gray-900 dark:text-white;
+}
+
+.prose h6 {
+  @apply text-sm font-semibold mb-2 mt-3 text-gray-900 dark:text-white;
+}
+
+.prose p {
+  @apply mb-4 leading-relaxed text-gray-700 dark:text-gray-300;
+}
+
+.prose ul, .prose ol {
+  @apply mb-4 pl-6;
+}
+
+.prose li {
+  @apply mb-1 text-gray-700 dark:text-gray-300;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-blue-500 pl-4 italic my-4 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 py-2 rounded-r;
+}
+
+.prose code {
+  @apply bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm font-mono text-red-600 dark:text-red-400;
+}
+
+.prose pre {
+  @apply bg-gray-100 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto my-4;
+}
+
+.prose pre code {
+  @apply bg-transparent px-0 py-0 text-gray-800 dark:text-gray-200;
+}
+
+.prose table {
+  @apply w-full border-collapse border border-gray-300 dark:border-gray-600 my-4;
+}
+
+.prose th, .prose td {
+  @apply border border-gray-300 dark:border-gray-600 px-3 py-2 text-left;
+}
+
+.prose th {
+  @apply bg-gray-100 dark:bg-gray-800 font-semibold;
+}
+
+.prose hr {
+  @apply border-gray-300 dark:border-gray-600 my-6;
+}
+
+.prose a {
+  @apply text-blue-600 dark:text-blue-400 hover:underline;
+}
+
+.prose strong {
+  @apply font-semibold text-gray-900 dark:text-white;
+}
+
+.prose em {
+  @apply italic;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .container {
+    @apply px-2;
+  }
+  
+  .markdown-body {
+    @apply text-sm leading-relaxed;
+  }
+  
+  .markdown-body h1 {
+    @apply text-xl;
+  }
+  
+  .markdown-body h2 {
+    @apply text-lg;
+  }
+  
+  .markdown-body h3 {
+    @apply text-base;
+  }
+}
