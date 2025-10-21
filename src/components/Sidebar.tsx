@@ -68,7 +68,16 @@ const Sidebar: React.FC = () => {
             <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p>暂无文档</p>
-              <p className="text-sm mt-1">点击上传按钮添加文档</p>
+              <p className="text-sm mt-1">
+                点击右上角的蓝色
+                <span className="inline-flex items-center mx-1 px-1 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded text-xs">
+                  📤
+                </span> 
+                上传按钮添加文档
+              </p>
+              <p className="text-xs mt-2 text-gray-400 dark:text-gray-500">
+                支持 .md、.markdown、.txt 格式
+              </p>
             </div>
           ) : (
             <div className="p-4 pl-6">

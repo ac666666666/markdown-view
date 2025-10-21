@@ -16,11 +16,21 @@ export default defineConfig({
     target: ['es2015', 'chrome58', 'safari11'],
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          markdown: ['react-markdown', 'remark-gfm', 'rehype-highlight', 'rehype-raw'],
-          utils: ['zustand', 'lucide-react']
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor'
+            }
+            if (id.includes('react-router-dom')) {
+              return 'router'
+            }
+            if (id.includes('react-markdown') || id.includes('remark') || id.includes('rehype')) {
+              return 'markdown'
+            }
+            if (id.includes('zustand') || id.includes('lucide-react')) {
+              return 'utils'
+            }
+          }
         }
       }
     },

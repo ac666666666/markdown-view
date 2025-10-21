@@ -1,12 +1,24 @@
-import React, { useEffect } from 'react'
-import { useAppStore } from './stores/useAppStore'
+import { useEffect } from 'react'
+import { useAppStore, restoreAppState } from './stores/useAppStore'
+import { cacheManager } from './utils/cache'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import MainContent from './components/MainContent'
 import './App.css'
 
 function App() {
-  const { theme, isSidebarOpen, setTheme } = useAppStore()
+  const { theme, setTheme } = useAppStore()
+
+  // 应用启动时恢复状态
+  useEffect(() => {
+    // 清理过期缓存
+    cacheManager.cleanExpiredCache()
+    
+    // 恢复应用状态
+    restoreAppState()
+    
+    console.log('App initialized with cached state')
+  }, [])
 
   // 应用主题到document
   useEffect(() => {

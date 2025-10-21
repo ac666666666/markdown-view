@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { Edit3, Save, Eye, FileText } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -20,12 +20,56 @@ const MainContent: React.FC = () => {
     updateDocument,
   } = useAppStore();
 
+  // 自动保存相关状态
+  const autoSaveTimerRef = useRef<number | null>(null);
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [lastSaved, setLastSaved] = React.useState<Date | null>(null);
+
   // 当切换文档时，同步编辑器内容
   useEffect(() => {
     if (currentDocument && !isEditMode) {
       setEditorContent(currentDocument.content);
     }
   }, [currentDocument, isEditMode, setEditorContent]);
+
+  // 自动保存函数（防抖）
+  const autoSave = useCallback(() => {
+    if (currentDocument && isEditMode && editorContent !== currentDocument.content) {
+      setIsSaving(true);
+      
+      // 模拟保存延迟
+      setTimeout(() => {
+        updateDocument(currentDocument.id, { 
+          content: editorContent,
+          updatedAt: new Date().toISOString()
+        });
+        setIsSaving(false);
+        setLastSaved(new Date());
+      }, 300);
+    }
+  }, [currentDocument, isEditMode, editorContent, updateDocument]);
+
+  // 编辑内容变化时触发自动保存
+  useEffect(() => {
+    if (isEditMode && currentDocument) {
+      // 清除之前的定时器
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+      
+      // 设置新的自动保存定时器（2秒防抖）
+      autoSaveTimerRef.current = setTimeout(() => {
+        autoSave();
+      }, 2000);
+    }
+
+    // 清理函数
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [editorContent, isEditMode, currentDocument, autoSave]);
 
   const handleEditToggle = () => {
     if (isEditMode) {
@@ -79,9 +123,26 @@ const MainContent: React.FC = () => {
           <h1 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-white truncate ml-2 lg:ml-4">
               {currentDocument.title}.md
             </h1>
-          <span className="hidden sm:inline text-sm text-gray-500 dark:text-gray-400">
-            {isEditMode ? "编辑模式" : "预览模式"}
-          </span>
+          <div className="flex items-center space-x-2">
+            <span className="hidden sm:inline text-sm text-gray-500 dark:text-gray-400">
+              {isEditMode ? "编辑模式" : "预览模式"}
+            </span>
+            {isEditMode && (
+              <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+                {isSaving ? (
+                  <span className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                    <span>保存中...</span>
+                  </span>
+                ) : lastSaved ? (
+                  <span className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>已保存 {lastSaved.toLocaleTimeString()}</span>
+                  </span>
+                ) : null}
+              </div>
+            )}
+          </div>
         </div>
 
         <button
@@ -137,9 +198,9 @@ const MainContent: React.FC = () => {
                   ]}
                   components={{
                     // 自定义代码块样式
-                    code: ({ node, inline, className, children, ...props }) => {
+                    code: ({ node, className, children, ...props }) => {
                       const match = /language-(\w+)/.exec(className || "");
-                      return !inline && match ? (
+                      return match ? (
                         <pre className="hljs rounded-lg overflow-x-auto">
                           <code className={className} {...props}>
                             {children}

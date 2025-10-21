@@ -1,6 +1,7 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, subscribeWithSelector } from 'zustand/middleware'
 import type { Theme, MarkdownFile } from '../types'
+import { cacheManager } from '../utils/cache'
 
 interface AppState {
   // 主题相关
@@ -32,8 +33,9 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>()(
-  persist(
-    (set, get) => ({
+  subscribeWithSelector(
+    persist(
+      (set, get) => ({
       // 主题相关
       theme: 'light',
       setTheme: (theme) => {
@@ -136,8 +138,115 @@ export const useAppStore = create<AppState>()(
       partialize: (state) => ({
         theme: state.theme,
         documents: state.documents,
+        currentDocument: state.currentDocument,
+        isEditMode: state.isEditMode,
+        editorContent: state.editorContent,
         isSidebarOpen: state.isSidebarOpen
-      })
+      }),
+      // 自定义存储引擎，添加错误处理
+      storage: {
+        getItem: (name) => {
+          try {
+            const item = localStorage.getItem(name)
+            return item ? JSON.parse(item) : null
+          } catch (error) {
+            console.warn('Failed to load from localStorage:', error)
+            return null
+          }
+        },
+        setItem: (name, value) => {
+          try {
+            localStorage.setItem(name, JSON.stringify(value))
+          } catch (error) {
+            console.warn('Failed to save to localStorage:', error)
+          }
+        },
+        removeItem: (name) => {
+          try {
+            localStorage.removeItem(name)
+          } catch (error) {
+            console.warn('Failed to remove from localStorage:', error)
+          }
+        }
+      },
+      // 版本控制，用于数据迁移
+      version: 1,
+      migrate: (persistedState: any, version: number) => {
+        if (version === 0) {
+          // 从版本0迁移到版本1的逻辑
+          return {
+            ...persistedState,
+            currentDocument: null,
+            isEditMode: false,
+            editorContent: ''
+          }
+        }
+        return persistedState
+      }
     }
   )
+ )
 )
+
+// 添加状态变化监听器，实现自动缓存
+useAppStore.subscribe(
+  (state) => ({
+    documents: state.documents,
+    currentDocument: state.currentDocument,
+    theme: state.theme,
+    isEditMode: state.isEditMode,
+    editorContent: state.editorContent,
+    isSidebarOpen: state.isSidebarOpen
+  }),
+  (state) => {
+    // 自动保存状态到缓存
+    cacheManager.saveAppState(state)
+  },
+  {
+    // 防抖，避免频繁保存
+    fireImmediately: false
+  }
+)
+
+// 应用启动时恢复状态
+const restoreAppState = () => {
+  if (cacheManager.hasCache()) {
+    const cachedState = cacheManager.restoreAppState()
+    const store = useAppStore.getState()
+    
+    // 恢复文档列表
+    if (cachedState.documents && cachedState.documents.length > 0) {
+      store.setDocuments(cachedState.documents)
+    }
+    
+    // 恢复当前文档
+    if (cachedState.currentDocument) {
+      store.setCurrentDocument(cachedState.currentDocument)
+    }
+    
+    // 恢复主题
+    if (cachedState.theme) {
+      store.setTheme(cachedState.theme)
+    }
+    
+    // 恢复编辑模式
+    if (cachedState.isEditMode !== undefined) {
+      store.setEditMode(cachedState.isEditMode)
+    }
+    
+    // 恢复编辑内容
+    if (cachedState.editorContent) {
+      store.setEditorContent(cachedState.editorContent)
+    }
+    
+    // 恢复侧边栏状态
+    if (cachedState.isSidebarOpen !== undefined) {
+      store.setSidebarOpen(cachedState.isSidebarOpen)
+    }
+    
+    console.log('App state restored from cache')
+  }
+}
+
+// 导出恢复函数
+export { restoreAppState }

@@ -30,7 +30,7 @@ export class MarkdownProcessor {
     const headings: Array<{ level: number; text: string; id: string }> = []
     const lines = content.split('\n')
     
-    lines.forEach((line, index) => {
+    lines.forEach((line) => {
       const match = line.match(/^(#{1,6})\s+(.+)$/)
       if (match) {
         const level = match[1].length

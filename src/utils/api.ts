@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 创建axios实例
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' 
+  baseURL: import.meta.env.PROD 
     ? 'https://your-api-domain.com/api' 
     : 'http://localhost:3001/api',
   timeout: 10000,

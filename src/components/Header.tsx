@@ -66,13 +66,24 @@ const Header: React.FC = () => {
 
     // 验证文件类型
     const validExtensions = [".md", ".markdown", ".txt"];
+    const fileName = file.name.toLowerCase();
+    const fileType = file.type;
+    
+    // 调试信息
+    console.log('文件信息:', {
+      name: file.name,
+      type: fileType,
+      size: file.size,
+      fileName: fileName
+    });
+    
     const isValidFile = validExtensions.some((ext) =>
-      file.name.toLowerCase().endsWith(ext)
-    );
+      fileName.endsWith(ext)
+    ) || fileType === 'text/markdown' || fileType === 'text/plain' || fileType.startsWith('text/');
 
     if (!isValidFile) {
       setUploadStatus('error');
-      setUploadError("请上传 .md、.markdown 或 .txt 格式的文件");
+      setUploadError(`不支持的文件类型。文件: ${file.name}, 类型: ${fileType || '未知'}。请上传 .md、.markdown 或 .txt 格式的文件`);
       return;
     }
 
@@ -102,6 +113,8 @@ const Header: React.FC = () => {
       };
 
       addDocument(newDocument);
+      // 自动选中新上传的文档
+      setCurrentDocument(newDocument);
       setUploadStatus('success');
       
       // 3秒后重置状态
@@ -168,7 +181,7 @@ const Header: React.FC = () => {
       // 创建一个模拟的事件对象
       const mockEvent = {
         target: { files: [file] }
-      } as React.ChangeEvent<HTMLInputElement>;
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
       handleFileUpload(mockEvent);
     }
   };
@@ -185,7 +198,7 @@ const Header: React.FC = () => {
       {/* Logo区域 */}
       <div className="flex items-center ml-4">
         <img
-          src="/src/assets/icon.webp"
+          src="/icon.webp"
           alt="MD预览器"
           className="w-8 h-8 rounded-md"
         />
@@ -200,7 +213,7 @@ const Header: React.FC = () => {
             disabled={isUploading || uploadStatus === 'uploading'}
             className={`
               flex items-center space-x-2 rounded-lg transition-all duration-200 font-medium touch-manipulation
-              ${isMobile ? 'px-3 py-2.5 text-sm' : 'px-4 py-2'}
+              ${isMobile ? 'px-4 py-3 text-sm min-h-[44px]' : 'px-4 py-2'}
               ${uploadStatus === 'success' 
                 ? 'bg-green-600 hover:bg-green-700 active:bg-green-800 text-white' 
                 : uploadStatus === 'error'
@@ -208,18 +221,19 @@ const Header: React.FC = () => {
                 : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-blue-400 text-white'
               }
             `}
-            title={uploadStatus === 'error' ? uploadError : "上传文件"}
+            title={uploadStatus === 'error' ? uploadError : "上传 MD 文件"}
           >
             {uploadStatus === 'uploading' ? (
-              <Upload className={`${isMobile ? 'w-4 h-4' : 'w-4 h-4'} animate-spin`} />
+              <Upload className={`${isMobile ? 'w-5 h-5' : 'w-4 h-4'} animate-spin`} />
             ) : uploadStatus === 'success' ? (
-              <CheckCircle className={`${isMobile ? 'w-4 h-4' : 'w-4 h-4'}`} />
+              <CheckCircle className={`${isMobile ? 'w-5 h-5' : 'w-4 h-4'}`} />
             ) : uploadStatus === 'error' ? (
-              <AlertCircle className={`${isMobile ? 'w-4 h-4' : 'w-4 h-4'}`} />
+              <AlertCircle className={`${isMobile ? 'w-5 h-5' : 'w-4 h-4'}`} />
             ) : (
-              <Upload className={`${isMobile ? 'w-4 h-4' : 'w-4 h-4'}`} />
+              <Upload className={`${isMobile ? 'w-5 h-5' : 'w-4 h-4'}`} />
             )}
-            <span className={`${isMobile ? 'text-xs' : ''} hidden sm:inline`}>
+            {/* 桌面端显示文字，移动端只显示图标 */}
+            <span className="hidden sm:inline">
               {uploadStatus === 'uploading' 
                 ? `上传中 ${uploadProgress}%` 
                 : uploadStatus === 'success'
@@ -253,11 +267,10 @@ const Header: React.FC = () => {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".md,.markdown,.txt,text/markdown,text/plain"
+          accept="text/markdown,text/plain,text/*,.md,.markdown,.txt"
           onChange={handleFileUpload}
           className="hidden"
           multiple={false}
-          capture={false}
         />
 
         {/* 主题切换按钮 */}
@@ -296,7 +309,16 @@ const Header: React.FC = () => {
                   <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                     <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
                     <p>暂无文档</p>
-                    <p className="text-sm mt-1">点击上传按钮添加文档</p>
+                    <p className="text-sm mt-1">
+                      点击左侧的蓝色
+                      <span className="inline-flex items-center mx-1 px-1 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded text-xs">
+                        📤
+                      </span> 
+                      上传按钮添加文档
+                    </p>
+                    <p className="text-xs mt-2 text-gray-400 dark:text-gray-500">
+                      支持 .md、.markdown、.txt 格式
+                    </p>
                   </div>
                 ) : (
                   <div className="p-2">
