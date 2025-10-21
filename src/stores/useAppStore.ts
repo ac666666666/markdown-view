@@ -171,11 +171,11 @@ export const useAppStore = create<AppState>()(
       },
       // 版本控制，用于数据迁移
       version: 1,
-      migrate: (persistedState: any, version: number) => {
+      migrate: (persistedState: unknown, version: number) => {
         if (version === 0) {
           // 从版本0迁移到版本1的逻辑
           return {
-            ...persistedState,
+            ...(persistedState as Record<string, unknown>),
             currentDocument: null,
             isEditMode: false,
             editorContent: ''

@@ -5,6 +5,7 @@ import remarkBreaks from 'remark-breaks'
 
 // Markdown处理工具
 export class MarkdownProcessor {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private processor: any
 
   constructor() {

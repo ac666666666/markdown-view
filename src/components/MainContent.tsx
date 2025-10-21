@@ -198,7 +198,7 @@ const MainContent: React.FC = () => {
                   ]}
                   components={{
                     // 自定义代码块样式
-                    code: ({ node, className, children, ...props }) => {
+                    code: ({ className, children, ...props }) => {
                       const match = /language-(\w+)/.exec(className || "");
                       return match ? (
                         <pre className="hljs rounded-lg overflow-x-auto">
