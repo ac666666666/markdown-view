@@ -1,90 +1,53 @@
-# GitHub Actions 工作流配置
-# 用于自动构建、测试和部署到 GitHub Pages
+name: Deploy to GitHub Pages
 
-name: 构建和部署
-
-# 触发条件
 on:
-  # 当推送到 main 分支时触发
   push:
     branches: [ main ]
-  # 当创建 Pull Request 到 main 分支时触发
-  pull_request:
-    branches: [ main ]
-  # 允许手动触发
   workflow_dispatch:
 
-# 设置权限（GitHub Pages 部署需要）
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 确保同时只有一个部署在运行
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # 构建和测试任务
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
-    # 1. 检出代码
-    - name: 📥 检出代码
-      uses: actions/checkout@v4
-    
-    # 2. 设置 Node.js 环境
-    - name: 🟢 设置 Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    # 3. 安装 pnpm
-    - name: 📦 安装 pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
-    
-    # 4. 安装依赖
-    - name: 📚 安装依赖
-      run: pnpm install --frozen-lockfile
-    
-    # 5. 代码质量检查
-    - name: 🔍 ESLint 检查
-      run: pnpm lint
-      continue-on-error: true  # 即使有警告也继续执行
-    
-    # 6. 类型检查
-    - name: 🔧 TypeScript 类型检查
-      run: pnpm run type-check
-      continue-on-error: true
-    
-    # 7. 构建项目
-    - name: 🏗️ 构建项目
-      run: pnpm build
-    
-    # 8. 上传构建产物
-    - name: 📤 上传构建产物
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./dist
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build
+        run: npm run build
+        
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
 
-  # 部署任务（只在 main 分支运行）
   deploy:
-    # 只有在 main 分支的推送时才部署
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    
     runs-on: ubuntu-latest
-    needs: build-and-test
-    
+    needs: build
     steps:
-    - name: 🚀 部署到 GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
