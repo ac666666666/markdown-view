@@ -1,6 +1,10 @@
 # 📝 Markdown 查看器
 
+[![Deploy to GitHub Pages](https://github.com/ac666666666/markdown-view/actions/workflows/deploy.yml/badge.svg)](https://github.com/ac666666666/markdown-view/actions/workflows/deploy.yml)
+
 一个现代化的 Markdown 文档查看器，支持实时预览、语法高亮、数学公式渲染等功能。
+
+🌐 **在线预览**: [GitHub Pages](https://ac666666666.github.io/markdown-view/) | [自部署版本](http://129.204.12.129:9080/)
 
 ## ✨ 功能特性
 
