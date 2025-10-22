@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef } from "react";
-import { Edit3, Save, Eye, FileText } from "lucide-react";
+import { Edit3, Save, Eye, FileText, Download } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -88,6 +88,34 @@ const MainContent: React.FC = () => {
     setEditorContent(e.target.value);
   };
 
+  // 下载功能
+  const handleDownload = () => {
+    if (!currentDocument) return;
+    
+    // 获取当前内容（如果在编辑模式，使用编辑器内容；否则使用文档内容）
+    const content = isEditMode ? editorContent : currentDocument.content;
+    
+    // 创建 Blob 对象
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+    
+    // 创建下载链接
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // 设置文件名
+    const fileName = `${currentDocument.title}.md`;
+    link.download = fileName;
+    
+    // 触发下载
+    document.body.appendChild(link);
+    link.click();
+    
+    // 清理
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   // 如果没有选中文档，显示欢迎界面
   if (!currentDocument) {
     return (
@@ -145,29 +173,40 @@ const MainContent: React.FC = () => {
           </div>
         </div>
 
-        <button
-          onClick={handleEditToggle}
-          className={`
-            flex items-center space-x-1 lg:space-x-2 px-2 py-1.5 lg:px-4 lg:py-2 rounded-lg font-medium transition-colors duration-200 flex-shrink-0 text-sm lg:text-base
-            ${
-              isEditMode
-                ? "bg-green-600 hover:bg-green-700 text-white"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
-            }
-          `}
-        >
-          {isEditMode ? (
-            <>
-              <Save className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-              <span className="hidden sm:inline">保存</span>
-            </>
-          ) : (
-            <>
-              <Edit3 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-              <span className="hidden sm:inline">编辑</span>
-            </>
-          )}
-        </button>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleEditToggle}
+            className={`
+              flex items-center space-x-1 lg:space-x-2 px-2 py-1.5 lg:px-4 lg:py-2 rounded-lg font-medium transition-colors duration-200 flex-shrink-0 text-sm lg:text-base
+              ${
+                isEditMode
+                  ? "bg-green-600 hover:bg-green-700 text-white"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
+              }
+            `}
+          >
+            {isEditMode ? (
+              <>
+                <Save className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                <span className="hidden sm:inline">保存</span>
+              </>
+            ) : (
+              <>
+                <Edit3 className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                <span className="hidden sm:inline">编辑</span>
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={handleDownload}
+            className="flex items-center space-x-1 lg:space-x-2 px-2 py-1.5 lg:px-4 lg:py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors duration-200 flex-shrink-0 text-sm lg:text-base"
+            title="下载文档"
+          >
+            <Download className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+            <span className="hidden sm:inline">下载</span>
+          </button>
+        </div>
       </div>
 
       {/* 主内容区 */}

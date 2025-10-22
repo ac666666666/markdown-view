@@ -32,17 +32,20 @@
 本项目配置了完整的 GitHub Actions CI/CD 流程：
 
 ### 自动化流程
+
 - ✅ **代码检查**: ESLint 代码质量检查
 - 🔧 **类型检查**: TypeScript 类型验证
 - 🏗️ **自动构建**: 每次推送自动构建项目
 - 🚀 **自动部署**: 推送到 main 分支自动部署到 GitHub Pages
 
 ### 触发条件
+
 - 推送到 `main` 分支
 - 创建 Pull Request 到 `main` 分支
 - 手动触发工作流
 
 ### 部署地址
+
 - **生产环境**: https://your-username.github.io/markdown-view/
 - **开发预览**: 每个 PR 都会进行构建验证
 
