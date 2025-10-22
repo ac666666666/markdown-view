@@ -7,25 +7,48 @@
     <meta name="description" content="轻量级MD预览器 - 支持实时预览、文件上传、主题切换" />
     <meta name="keywords" content="Markdown, 预览器, React, 在线编辑" />
     
-    <!-- 微信浏览器优化 -->
+    <!-- 移动端通用优化 -->
     <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="HandheldFriendly" content="true" />
+    
+    <!-- 微信浏览器优化 -->
     <meta name="x5-orientation" content="portrait" />
     <meta name="x5-fullscreen" content="true" />
     <meta name="x5-page-mode" content="app" />
     
+    <!-- QQ浏览器优化 -->
+    <meta name="browsermode" content="application" />
+    <meta name="x5-page-mode" content="app" />
+    
+    <!-- UC浏览器优化 -->
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="full-screen" content="yes" />
+    <meta name="layoutmode" content="fitscreen" />
+    
     <!-- iOS Safari 优化 -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MD预览器" />
+    
+    <!-- Android Chrome 优化 -->
+    <meta name="theme-color" content="#1f2937" />
+    <meta name="msapplication-navbutton-color" content="#1f2937" />
     
     <title>MD预览器</title>
-    <script type="module" crossorigin src="/assets/index-dwXbJByN.js"></script>
+    <script type="module" crossorigin src="/assets/index-BOTjeSkf.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-ymhEFHtn.js">
     <link rel="modulepreload" crossorigin href="/assets/markdown-_MMKyAVX.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-BTy-cysg.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-D-GY-k1N.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-CnY3Zdmy.css">
+    <script type="module">import.meta.url;import("_").catch(()=>1);(async function*(){})().next();window.__vite_is_modern_browser=true</script>
+    <script type="module">!function(){if(window.__vite_is_modern_browser)return;console.warn("vite: loading legacy chunks, syntax error above and the same error below should be ignored");var e=document.getElementById("vite-legacy-polyfill"),n=document.createElement("script");n.src=e.src,n.onload=function(){System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))},document.body.appendChild(n)}();</script>
   </head>
   <body>
     <div id="root"></div>
+    <script nomodule>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",(function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()}),!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script>
+    <script nomodule crossorigin id="vite-legacy-polyfill" src="/assets/polyfills-legacy-Zp-GxpiI.js"></script>
+    <script nomodule crossorigin id="vite-legacy-entry" data-src="/assets/index-legacy-DlF21IWf.js">System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))</script>
   </body>
 </html>
